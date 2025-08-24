@@ -9,7 +9,6 @@ import co.com.powerup.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -20,7 +19,6 @@ import reactor.core.publisher.Mono;
 public class UserHandler {
 
     private final UserUseCase userUseCase;
-    private final Validator validator;
 
     public Mono<ServerResponse> listenGetAllUsers(ServerRequest serverRequest) {
         return ServerResponse.ok()

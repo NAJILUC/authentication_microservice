@@ -16,9 +16,17 @@ public class ErrorResponse {
         this.errors = errors;
     }
 
-    public String getCode() { return code; }
-    public String getMessage() { return message; }
-    public List<FieldValidationError> getErrors() { return errors; }
+    public String getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public List<FieldValidationError> getErrors() {
+        return errors;
+    }
 
     public static class FieldError {
         private final String field;
@@ -29,7 +37,12 @@ public class ErrorResponse {
             this.error = error;
         }
 
-        public String getField() { return field; }
-        public String getError() { return error; }
+        public String getField() {
+            return field;
+        }
+
+        public String getError() {
+            return error;
+        }
     }
 }

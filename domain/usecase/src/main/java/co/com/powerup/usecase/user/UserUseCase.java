@@ -100,7 +100,7 @@ public class UserUseCase {
 
         return this.checkEmailExists(user.getEmail(), String.valueOf(user.getId()))
                 .flatMap(exists -> {
-                    if (exists) {
+                    if (exists.equals(Boolean.TRUE)) {
                         return Mono.error(new ValidationException(
                                 List.of(new FieldValidationError("email", "Email already exists"))
                         ));
@@ -108,6 +108,7 @@ public class UserUseCase {
                     return Mono.just(user);
                 });
     }
+
     public Mono<Boolean> checkEmailExists(String email, String currentUserId) {
         return userRepository.findByEmail(email)
                 .map(user -> !String.valueOf(user.getId()).equals(currentUserId))

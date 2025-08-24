@@ -20,7 +20,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserEntityRepositoryAdapterTest {
-    // TODO: change four you own tests
 
     @InjectMocks
     UserEntityRepositoryAdapter repositoryAdapter;

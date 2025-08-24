@@ -28,9 +28,10 @@ public class UserEntityRepositoryAdapter extends ReactiveAdapterOperations<
 
     @Override
     @Transactional
-    public Mono<User> save(User User) {
-        return super.save(User);
+    public Mono<User> save(User user) {
+        return super.save(user);
     }
+
     @Override
     public Flux<User> findAll() {
         return super.findAll();
