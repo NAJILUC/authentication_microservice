@@ -6,6 +6,7 @@ import co.com.powerup.r2dbc.entity.UserEntity;
 import co.com.powerup.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -26,6 +27,7 @@ public class UserEntityRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
+    @Transactional
     public Mono<User> save(User User) {
         return super.save(User);
     }
@@ -41,7 +43,13 @@ public class UserEntityRepositoryAdapter extends ReactiveAdapterOperations<
 
     @Override
     public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+        return super.repository.deleteById(id);
+    }
+
+    @Override
+    public Mono<User> findByEmail(String email) {
+        return repository.findByEmail(email)
+                .map(entity -> super.mapper.map(entity, User.class));
     }
 
 }
