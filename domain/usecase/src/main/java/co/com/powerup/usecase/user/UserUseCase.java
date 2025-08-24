@@ -2,23 +2,32 @@ package co.com.powerup.usecase.user;
 
 import co.com.powerup.model.user.User;
 import co.com.powerup.model.user.gateways.UserRepository;
+import co.com.powerup.model.user.interfaces.LoggerService;
 import co.com.powerup.usecase.exception.ValidationException;
 import co.com.powerup.usecase.utils.FieldValidationError;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 public class UserUseCase {
 
     private final UserRepository userRepository;
+    private final LoggerService log;
 
     public Mono<User> saveUser(User user) {
         return validateUser(user)
-                .flatMap(validDto -> userRepository.save(user));
+                .publishOn(Schedulers.boundedElastic())
+                .flatMap(validDto -> {
+                    Mono<User> createdUser = userRepository.save(user);
+                    log.info("User created {}", Objects.requireNonNull(createdUser.block()).getId());
+                    return createdUser;
+                });
     }
 
     public Mono<User> updateUserById(String id, User user) {
@@ -40,6 +49,7 @@ public class UserUseCase {
     }
 
     private Mono<User> validateUser(User user) {
+        log.info("Validating user");
         List<FieldValidationError> errors = new ArrayList<>();
 
         if (user.getFirstNames() == null || user.getFirstNames().isEmpty()) {
@@ -58,6 +68,7 @@ public class UserUseCase {
         }
 
         if (!errors.isEmpty()) {
+            log.error("Contains errors: {}", errors);
             return Mono.error(new ValidationException(errors));
         }
 
@@ -97,10 +108,12 @@ public class UserUseCase {
         if (user.getEmail() == null) {
             return Mono.just(user);
         }
+        log.info("Validating email {}", user.getEmail());
 
         return this.checkEmailExists(user.getEmail(), String.valueOf(user.getId()))
                 .flatMap(exists -> {
                     if (exists.equals(Boolean.TRUE)) {
+                        log.error("Email {} already exists", user.getEmail());
                         return Mono.error(new ValidationException(
                                 List.of(new FieldValidationError("email", "Email already exists"))
                         ));
