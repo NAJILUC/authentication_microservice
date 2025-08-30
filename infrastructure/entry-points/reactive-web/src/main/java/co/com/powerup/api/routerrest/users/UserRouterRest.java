@@ -81,8 +81,7 @@ public class UserRouterRest {
                         .and(accept(MediaType.APPLICATION_JSON)),
                 userHandler::listenGetAllUsers)
                 .and(route(GET("/api/v1/users/{id}")
-                                .and(accept(MediaType.APPLICATION_JSON))
-                                .and(contentType(MediaType.APPLICATION_JSON)),
+                                .and(accept(MediaType.APPLICATION_JSON)),
                         userHandler::listenGetUserById))
                 .andRoute(POST("/api/v1/users"),
                         userHandler::listenCreateUser);
