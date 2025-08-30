@@ -1,5 +1,7 @@
 package co.com.powerup.api;
 
+import co.com.powerup.api.handlers.users.UserHandler;
+import co.com.powerup.api.routerrest.users.UserRouterRest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,6 @@
 package co.com.powerup.usecase.exception;
 
+import co.com.powerup.usecase.enums.errorcodes.ErrorCodeEnum;
 import co.com.powerup.usecase.utils.FieldValidationError;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,12 +9,14 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ValidationException extends RuntimeException {
+public class UserValidationException extends RuntimeException {
     private final List<FieldValidationError> errors;
 
-    public ValidationException(List<FieldValidationError> errors) {
+    public UserValidationException(List<ErrorCodeEnum> errors) {
         super("Validation failed");
-        this.errors = errors;
+        this.errors = errors.stream()
+                .map(FieldValidationError::new)
+                .toList();
     }
 
 }

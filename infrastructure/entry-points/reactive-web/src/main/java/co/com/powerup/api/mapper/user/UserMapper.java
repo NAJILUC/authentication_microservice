@@ -12,6 +12,7 @@ public class UserMapper {
                 .lastNames(dto.getLastNames())
                 .email(dto.getEmail())
                 .phoneNumber(dto.getPhoneNumber())
+                .birthDate(dto.getBirthDate())
                 .address(dto.getAddress())
                 .baseSalary(dto.getBaseSalary())
                 .build();
@@ -23,6 +24,7 @@ public class UserMapper {
                 .firstNames(user.getFirstNames())
                 .lastNames(user.getLastNames())
                 .email(user.getEmail())
+                .birthDate(user.getBirthDate())
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
                 .baseSalary(user.getBaseSalary())

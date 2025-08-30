@@ -2,121 +2,55 @@ package co.com.powerup.usecase.user;
 
 import co.com.powerup.model.user.User;
 import co.com.powerup.model.user.gateways.UserRepository;
-import co.com.powerup.model.user.interfaces.LoggerService;
-import co.com.powerup.usecase.exception.ValidationException;
-import co.com.powerup.usecase.utils.FieldValidationError;
+import co.com.powerup.usecase.enums.errorcodes.ErrorCodeEnum;
+import co.com.powerup.usecase.exception.UserValidationException;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public class UserUseCase {
 
     private final UserRepository userRepository;
-    private final LoggerService log;
+    private static final Logger log = Logger.getLogger(UserUseCase.class.getName());
 
-    public Mono<User> saveUser(User user) {
+    public Mono<User> createUser(User user) {
         return validateUser(user)
-                .publishOn(Schedulers.boundedElastic())
-                .flatMap(validDto -> {
-                    Mono<User> createdUser = userRepository.save(user);
-                    log.info("User created {}", Objects.requireNonNull(createdUser.block()).getId());
-                    return createdUser;
-                });
-    }
-
-    public Mono<User> updateUserById(String id, User user) {
-        return userRepository.findById(id)
-                .flatMap(existingUser -> this.validateAndUpdate(existingUser, user))
-                .switchIfEmpty(Mono.error(new RuntimeException("User not found")));
+                .flatMap(validDto -> userRepository.save(user)
+                        .doOnNext(createdUser ->
+                                log.log(Level.INFO, "User created {}", createdUser.getId())
+                        )
+                );
     }
 
     public Flux<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public Mono<User> getUserById(String id) {
+    public Mono<User> getUserById(Long id) {
         return userRepository.findById(id);
-    }
-
-    public Mono<Void> deleteUser(String id) {
-        return userRepository.deleteById(id);
     }
 
     private Mono<User> validateUser(User user) {
         log.info("Validating user");
-        List<FieldValidationError> errors = new ArrayList<>();
-
-        if (user.getFirstNames() == null || user.getFirstNames().isEmpty()) {
-            errors.add(new FieldValidationError("firstNames", "First Names cannot be empty"));
-        }
-        if (user.getLastNames() == null || user.getLastNames().isEmpty()) {
-            errors.add(new FieldValidationError("lastNames", "Last Names cannot be empty"));
-        }
-        if (user.getEmail() == null || !user.getEmail().contains("@")) {
-            errors.add(new FieldValidationError("email", "Invalid email format"));
-        }
-        if (user.getBaseSalary() == null) {
-            errors.add(new FieldValidationError("baseSalary", "Base Salary cannot be empty"));
-        } else if (user.getBaseSalary() <= 0 || user.getBaseSalary() > 15000000) {
-            errors.add(new FieldValidationError("baseSalary", "Base Salary must be between 0 and 1500000"));
-        }
-
-        if (!errors.isEmpty()) {
-            log.error("Contains errors: {}", errors);
-            return Mono.error(new ValidationException(errors));
-        }
-
         return this.validateEmailUnique(user);
-    }
-
-    private Mono<User> validateAndUpdate(User existingUser, User newUser) {
-
-        if (newUser.getEmail() != null && !newUser.getEmail().contains("@")) {
-            return Mono.error(new IllegalArgumentException("Email no válido"));
-        }
-
-        if (newUser.getLastNames() != null && !newUser.getLastNames().isBlank() &&
-                !existingUser.getLastNames().equalsIgnoreCase(newUser.getLastNames())) {
-            existingUser.setLastNames(newUser.getLastNames());
-        }
-
-        if (newUser.getFirstNames() != null && !newUser.getFirstNames().isBlank() &&
-                !existingUser.getFirstNames().equalsIgnoreCase(newUser.getFirstNames())) {
-            existingUser.setFirstNames(newUser.getFirstNames());
-        }
-
-        if (newUser.getEmail() != null && !newUser.getEmail().isBlank() &&
-                !existingUser.getEmail().equalsIgnoreCase(newUser.getEmail())) {
-            existingUser.setEmail(newUser.getEmail());
-        }
-
-        if (newUser.getPhoneNumber() != null && !newUser.getPhoneNumber().isBlank() &&
-                existingUser.getPhoneNumber().equalsIgnoreCase(newUser.getPhoneNumber())) {
-            existingUser.setPhoneNumber(newUser.getPhoneNumber());
-        }
-
-        return userRepository.save(existingUser);
     }
 
     private Mono<User> validateEmailUnique(User user) {
         if (user.getEmail() == null) {
             return Mono.just(user);
         }
-        log.info("Validating email {}", user.getEmail());
+        log.info("Validating email");
 
         return this.checkEmailExists(user.getEmail(), String.valueOf(user.getId()))
                 .flatMap(exists -> {
                     if (exists.equals(Boolean.TRUE)) {
-                        log.error("Email {} already exists", user.getEmail());
-                        return Mono.error(new ValidationException(
-                                List.of(new FieldValidationError("email", "Email already exists"))
-                        ));
+                        log.warning("Email already exists");
+                        return Mono.error(new UserValidationException(List.of(ErrorCodeEnum.C01USER01)));
                     }
                     return Mono.just(user);
                 });

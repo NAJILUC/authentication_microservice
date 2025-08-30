@@ -18,4 +18,6 @@ public class User {
     private String phoneNumber;
     private String email;
     private Double baseSalary;
+    private Long rolId;
+    private String identificationNumber;
 }

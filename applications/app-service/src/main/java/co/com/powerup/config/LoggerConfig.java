@@ -1,7 +1,7 @@
 package co.com.powerup.config;
 
 import co.com.powerup.api.util.LoggerServiceImpl;
-import co.com.powerup.model.user.interfaces.LoggerService;
+import co.com.powerup.model.interfaces.LoggerService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

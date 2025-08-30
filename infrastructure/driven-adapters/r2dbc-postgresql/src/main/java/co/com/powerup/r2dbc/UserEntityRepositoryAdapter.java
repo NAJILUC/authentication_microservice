@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 public class UserEntityRepositoryAdapter extends ReactiveAdapterOperations<
         User/* change for domain model */,
         UserEntity/* change for adapter model */,
-        String,
+        Long,
         UserEntityRepository
         > implements UserRepository {
     public UserEntityRepositoryAdapter(UserEntityRepository repository, ObjectMapper mapper) {
@@ -38,13 +38,8 @@ public class UserEntityRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
-    public Mono<User> findById(String id) {
+    public Mono<User> findById(Long id) {
         return super.findById(id);
-    }
-
-    @Override
-    public Mono<Void> deleteById(String id) {
-        return super.repository.deleteById(id);
     }
 
     @Override

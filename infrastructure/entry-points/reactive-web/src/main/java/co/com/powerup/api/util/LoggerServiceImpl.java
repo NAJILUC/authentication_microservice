@@ -1,6 +1,6 @@
 package co.com.powerup.api.util;
 
-import co.com.powerup.model.user.interfaces.LoggerService;
+import co.com.powerup.model.interfaces.LoggerService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

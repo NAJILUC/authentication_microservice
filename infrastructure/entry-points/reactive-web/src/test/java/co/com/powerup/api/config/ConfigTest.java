@@ -1,7 +1,7 @@
 package co.com.powerup.api.config;
 
-import co.com.powerup.api.UserHandler;
-import co.com.powerup.api.UserRouterRest;
+import co.com.powerup.api.handlers.users.UserHandler;
+import co.com.powerup.api.routerrest.users.UserRouterRest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;

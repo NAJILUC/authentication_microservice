@@ -41,24 +41,13 @@ class UserEntityRepositoryAdapterTest {
             .baseSalary(123.45)
             .build();
 
-    private final User user = User.builder()
-            .id(1L)
-            .firstNames("Julian")
-            .lastNames("Navarro")
-            .birthDate(LocalDate.of(2000, 6, 15))
-            .address("Calle n")
-            .phoneNumber("55555555")
-            .email("test@mail.com")
-            .baseSalary(123.45)
-            .build();
-
     @Test
     void mustFindValueById() {
 
-        when(repository.findById("1")).thenReturn(Mono.just(userEntity));
+        when(repository.findById(1L)).thenReturn(Mono.just(userEntity));
         when(mapper.map(userEntity, User.class)).thenReturn(user);
 
-        Mono<User> result = repositoryAdapter.findById("1");
+        Mono<User> result = repositoryAdapter.findById(1L);
 
         StepVerifier.create(result)
                 .expectNextMatches(value -> value.equals(user))
