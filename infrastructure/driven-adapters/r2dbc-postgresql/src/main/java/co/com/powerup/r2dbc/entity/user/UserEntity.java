@@ -1,4 +1,4 @@
-package co.com.powerup.r2dbc.entity;
+package co.com.powerup.r2dbc.entity.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,4 +26,6 @@ public class UserEntity {
     private String phoneNumber;
     private String email;
     private Double baseSalary;
+
+    private Long roleId;
 }

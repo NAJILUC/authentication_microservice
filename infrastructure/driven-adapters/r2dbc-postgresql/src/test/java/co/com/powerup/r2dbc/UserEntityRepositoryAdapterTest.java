@@ -1,7 +1,9 @@
 package co.com.powerup.r2dbc;
 
 import co.com.powerup.model.user.User;
-import co.com.powerup.r2dbc.entity.UserEntity;
+import co.com.powerup.r2dbc.entity.user.UserEntity;
+import co.com.powerup.r2dbc.repositories.user.UserEntityRepository;
+import co.com.powerup.r2dbc.repositories.user.UserEntityRepositoryAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

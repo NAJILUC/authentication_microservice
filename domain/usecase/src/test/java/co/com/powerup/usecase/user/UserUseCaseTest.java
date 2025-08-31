@@ -3,7 +3,7 @@ package co.com.powerup.usecase.user;
 import co.com.powerup.model.user.User;
 import co.com.powerup.model.user.gateways.UserRepository;
 import co.com.powerup.usecase.enums.errorcodes.ErrorCodeEnum;
-import co.com.powerup.usecase.exception.UserValidationException;
+import co.com.powerup.usecase.exception.BasicValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -61,8 +61,8 @@ class UserUseCaseTest {
 
         StepVerifier.create(userUseCase.createUser(testUser))
                 .expectErrorSatisfies(error -> {
-                    assert error instanceof UserValidationException;
-                    UserValidationException ex = (UserValidationException) error;
+                    assert error instanceof BasicValidationException;
+                    BasicValidationException ex = (BasicValidationException) error;
                     System.out.println(ex.getErrors());
                     assert ex.getErrors().getFirst().getCode().equals(ErrorCodeEnum.C01USER01.getCode());
                 })

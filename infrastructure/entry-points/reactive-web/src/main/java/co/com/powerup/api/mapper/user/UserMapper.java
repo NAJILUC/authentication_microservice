@@ -15,6 +15,7 @@ public class UserMapper {
                 .birthDate(dto.getBirthDate())
                 .address(dto.getAddress())
                 .baseSalary(dto.getBaseSalary())
+                .password(dto.getPassword())
                 .build();
     }
 

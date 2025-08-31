@@ -1,8 +1,8 @@
-package co.com.powerup.r2dbc;
+package co.com.powerup.r2dbc.repositories.user;
 
 import co.com.powerup.model.user.User;
 import co.com.powerup.model.user.gateways.UserRepository;
-import co.com.powerup.r2dbc.entity.UserEntity;
+import co.com.powerup.r2dbc.entity.user.UserEntity;
 import co.com.powerup.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
@@ -46,6 +46,12 @@ public class UserEntityRepositoryAdapter extends ReactiveAdapterOperations<
     public Mono<User> findByEmail(String email) {
         return repository.findByEmail(email)
                 .map(entity -> super.mapper.map(entity, User.class));
+    }
+
+    @Override
+    public Mono<User> findByIdentificationNumber(String identificationNumber) {
+        return repository.findByIdentificationNumber(identificationNumber)
+                .map(userEntity -> super.mapper.map(userEntity, User.class));
     }
 
 }

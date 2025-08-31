@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
-class UserHandlerTest {
+class AuthHandlerTest {
 
     @Mock
     private UserUseCase userUseCase;

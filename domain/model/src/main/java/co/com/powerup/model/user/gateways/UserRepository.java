@@ -13,4 +13,6 @@ public interface UserRepository {
     Mono<User> findById(Long id);
 
     Mono<User> findByEmail(String email);
+
+    Mono<User> findByIdentificationNumber(String identificationNumber);
 }

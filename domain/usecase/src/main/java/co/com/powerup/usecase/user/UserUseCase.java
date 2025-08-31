@@ -3,7 +3,7 @@ package co.com.powerup.usecase.user;
 import co.com.powerup.model.user.User;
 import co.com.powerup.model.user.gateways.UserRepository;
 import co.com.powerup.usecase.enums.errorcodes.ErrorCodeEnum;
-import co.com.powerup.usecase.exception.UserValidationException;
+import co.com.powerup.usecase.exception.BasicValidationException;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -50,7 +50,7 @@ public class UserUseCase {
                 .flatMap(exists -> {
                     if (exists.equals(Boolean.TRUE)) {
                         log.warning("Email already exists");
-                        return Mono.error(new UserValidationException(List.of(ErrorCodeEnum.C01USER01)));
+                        return Mono.error(new BasicValidationException(List.of(ErrorCodeEnum.C01USER01)));
                     }
                     return Mono.just(user);
                 });
@@ -60,5 +60,9 @@ public class UserUseCase {
         return userRepository.findByEmail(email)
                 .map(user -> !String.valueOf(user.getId()).equals(currentUserId))
                 .defaultIfEmpty(false);
+    }
+
+    public Mono<User> getByIdentificationNumber(String identificationNumber) {
+        return userRepository.findByIdentificationNumber(identificationNumber);
     }
 }

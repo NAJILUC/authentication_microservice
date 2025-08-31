@@ -1,8 +1,7 @@
 package co.com.powerup.api.exceptions;
 
-import co.com.powerup.usecase.enums.errorcodes.ErrorCodeEnum;
 import co.com.powerup.usecase.enums.errorcodes.ErrorEnum;
-import co.com.powerup.usecase.exception.UserValidationException;
+import co.com.powerup.usecase.exception.BasicValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.http.HttpStatus;
@@ -47,14 +46,14 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
                 body.put("code", ErrorEnum.VALIDATION_EXCEPTION.getCode());
                 body.put("errors", errors);
 
-            } else if (ex instanceof UserValidationException userValidationException) {
+            } else if (ex instanceof BasicValidationException basicValidationException) {
                 exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
 
-                String code = userValidationException.getErrors().isEmpty()
+                String code = basicValidationException.getErrors().isEmpty()
                         ? "UNKNOWN"
-                        : userValidationException.getErrors().get(0).getCode();
+                        : basicValidationException.getErrors().get(0).getCode();
 
-                List<Map<String, String>> errors = userValidationException.getErrors()
+                List<Map<String, String>> errors = basicValidationException.getErrors()
                         .stream()
                         .map(err -> {
                             Map<String, String> map = new HashMap<>();
