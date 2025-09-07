@@ -1,7 +1,9 @@
 package co.com.powerup.model.jwt.gateways;
 
+import co.com.powerup.model.user.User;
 import reactor.core.publisher.Mono;
 
 public interface TokenInterface {
-    Mono<String> generateToken(String email, Long rolId);
+    String generateToken(User user);
+    Mono<User> validateToken(String token);
 }

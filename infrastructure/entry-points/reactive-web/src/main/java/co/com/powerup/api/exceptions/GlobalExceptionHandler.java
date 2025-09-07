@@ -3,6 +3,7 @@ package co.com.powerup.api.exceptions;
 import co.com.powerup.usecase.enums.errorcodes.ErrorEnum;
 import co.com.powerup.usecase.exception.BasicValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 
@@ -27,52 +29,58 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         try {
             Map<String, Object> body = new HashMap<>();
 
-            if (ex instanceof ValidationException validationException) {
-                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+            switch (ex) {
+                case ValidationException validationException -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
 
-                List<Map<String, String>> errors = validationException.getErrors()
-                        .getFieldErrors()
-                        .stream()
-                        .map(error -> {
-                            Map<String, String> map = new HashMap<>();
-                            map.put("field", error.getField());
-                            map.put("message", error.getDefaultMessage());
-                            return map;
-                        })
-                        .toList();
+                    List<Map<String, String>> errors = validationException.getErrors()
+                            .getFieldErrors()
+                            .stream()
+                            .map(error -> {
+                                Map<String, String> map = new HashMap<>();
+                                map.put("field", error.getField());
+                                map.put("message", error.getDefaultMessage());
+                                return map;
+                            })
+                            .toList();
 
-                body.put("status", HttpStatus.BAD_REQUEST.value());
-                body.put("error", "Validation Failed");
-                body.put("code", ErrorEnum.VALIDATION_EXCEPTION.getCode());
-                body.put("errors", errors);
+                    body.put("status", HttpStatus.BAD_REQUEST.value());
+                    body.put("error", "Validation Failed");
+                    body.put("code", ErrorEnum.VALIDATION_EXCEPTION.getCode());
+                    body.put("errors", errors);
 
-            } else if (ex instanceof BasicValidationException basicValidationException) {
-                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+                }
+                case BasicValidationException basicValidationException -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
 
-                String code = basicValidationException.getErrors().isEmpty()
-                        ? "UNKNOWN"
-                        : basicValidationException.getErrors().get(0).getCode();
+                    String code = basicValidationException.getErrors().isEmpty()
+                            ? "UNKNOWN"
+                            : basicValidationException.getErrors().get(0).getCode();
 
-                List<Map<String, String>> errors = basicValidationException.getErrors()
-                        .stream()
-                        .map(err -> {
-                            Map<String, String> map = new HashMap<>();
-                            map.put("field", err.getField());
-                            map.put("message", err.getMessage());
-                            return map;
-                        })
-                        .toList();
+                    List<Map<String, String>> errors = basicValidationException.getErrors()
+                            .stream()
+                            .map(err -> {
+                                Map<String, String> map = new HashMap<>();
+                                map.put("field", err.getField());
+                                map.put("message", err.getMessage());
+                                return map;
+                            })
+                            .toList();
 
-                body.put("status", HttpStatus.BAD_REQUEST.value());
-                body.put("error", "Validation Failed");
-                body.put("code", code);
-                body.put("errors", errors);
+                    body.put("status", HttpStatus.BAD_REQUEST.value());
+                    body.put("error", "Validation Failed");
+                    body.put("code", code);
+                    body.put("errors", errors);
 
-            } else {
-                exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
-                body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-                body.put("error", "Unexpected error");
-                body.put("code", ErrorEnum.INTERNAL_EXCEPTION.getCode());
+                }
+                default -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+                    body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+                    body.put("error", "Unexpected error");
+                    body.put("code", ErrorEnum.INTERNAL_EXCEPTION.getCode());
+                    log.error(ex.getMessage());
+                    log.error(ex.toString());
+                }
             }
 
             byte[] bytes = objectMapper.writeValueAsBytes(body);

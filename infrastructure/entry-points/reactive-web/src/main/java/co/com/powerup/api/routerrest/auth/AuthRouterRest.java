@@ -1,11 +1,8 @@
 package co.com.powerup.api.routerrest.auth;
 
 import co.com.powerup.api.dto.request.auth.LoginRequest;
-import co.com.powerup.api.dto.request.user.CreateUserRequest;
 import co.com.powerup.api.dto.response.auth.LoginResponse;
-import co.com.powerup.api.dto.response.user.UserResponse;
 import co.com.powerup.api.handlers.auth.AuthHandler;
-import co.com.powerup.api.handlers.users.UserHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.*;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
@@ -29,12 +27,12 @@ public class AuthRouterRest {
     @Bean
     @RouterOperations({
             @RouterOperation(
-                    path = "/api/v1/users",
+                    path = "/api/v1/login",
                     method = RequestMethod.POST,
                     operation = @Operation(
                             operationId = "login",
                             summary = "Login",
-                            tags = {"Users"},
+                            tags = {"Login"},
                             requestBody = @RequestBody(
                                     description = "Login",
                                     required = true,

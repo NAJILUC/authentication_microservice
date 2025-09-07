@@ -26,6 +26,8 @@ public class UserEntity {
     private String phoneNumber;
     private String email;
     private Double baseSalary;
+    private String password;
+    private String identificationNumber;
 
     private Long roleId;
 }

@@ -4,6 +4,7 @@ import co.com.powerup.model.user.User;
 import co.com.powerup.model.user.gateways.UserRepository;
 import co.com.powerup.usecase.enums.errorcodes.ErrorCodeEnum;
 import co.com.powerup.usecase.exception.BasicValidationException;
+import co.com.powerup.usecase.security.AuthUseCase;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
 public class UserUseCase {
 
     private final UserRepository userRepository;
+    private final AuthUseCase authUseCase;
     private static final Logger log = Logger.getLogger(UserUseCase.class.getName());
 
     public Mono<User> createUser(User user) {
@@ -37,6 +39,8 @@ public class UserUseCase {
 
     private Mono<User> validateUser(User user) {
         log.info("Validating user");
+
+        user.setPassword(authUseCase.encodePassword(user.getIdentificationNumber()));
         return this.validateEmailUnique(user);
     }
 
