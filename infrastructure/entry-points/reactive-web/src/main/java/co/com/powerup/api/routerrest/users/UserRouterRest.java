@@ -3,6 +3,7 @@ package co.com.powerup.api.routerrest.users;
 import co.com.powerup.api.dto.request.user.CreateUserRequest;
 import co.com.powerup.api.dto.response.user.UserResponse;
 import co.com.powerup.api.handlers.users.UserHandler;
+import co.com.powerup.api.security.RoleFilter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
+
+import java.util.Set;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -80,6 +83,7 @@ public class UserRouterRest {
         return route(GET("/api/v1/users")
                         .and(accept(MediaType.APPLICATION_JSON)),
                 userHandler::listenGetAllUsers)
+                .filter(new RoleFilter(Set.of(1L)))
                 .and(route(GET("/api/v1/users/{id}")
                                 .and(accept(MediaType.APPLICATION_JSON)),
                         userHandler::listenGetUserById))

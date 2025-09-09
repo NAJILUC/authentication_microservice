@@ -21,4 +21,5 @@ public class UserResponse {
     private LocalDate birthDate;
     private String email;
     private Double baseSalary;
+    private Long roleId;
 }

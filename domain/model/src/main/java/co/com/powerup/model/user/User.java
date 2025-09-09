@@ -18,7 +18,7 @@ public class User {
     private String phoneNumber;
     private String email;
     private Double baseSalary;
-    private Long rolId;
+    private Long roleId;
     private String password;
     private String identificationNumber;
 }

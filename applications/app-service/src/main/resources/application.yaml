@@ -33,4 +33,4 @@ adapters:
     password: "pass"
 jwt:
   secret: "mySuperSecretKeyForJwtAtLeast32Chars!!"
-  expiration: 86400
+  expiration: 86400000

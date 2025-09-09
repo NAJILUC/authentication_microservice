@@ -13,9 +13,11 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
-public class JwtTokenAdapter  implements TokenInterface {
+public class JwtTokenAdapter implements TokenInterface {
 
     private final Key key;
     private final long expiration;
@@ -33,9 +35,13 @@ public class JwtTokenAdapter  implements TokenInterface {
 
     @Override
     public String generateToken(User user) {
+        Map<String, Object> tokenInfo = new HashMap<>();
+        tokenInfo.put("email", user.getEmail());
+        tokenInfo.put("roleId", user.getRoleId());
+        tokenInfo.put("name", user.getFirstNames() + " " + user.getLastNames());
         return Jwts.builder()
                 .setSubject(user.getIdentificationNumber())
-                .claim("roleId", user.getRolId())
+                .addClaims(tokenInfo)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
@@ -53,7 +59,8 @@ public class JwtTokenAdapter  implements TokenInterface {
 
             User user = new User();
             user.setIdentificationNumber(claims.getSubject());
-            user.setRolId((Long) claims.get("roleId"));
+            user.setRoleId(Long.valueOf(claims.get("roleId").toString()));
+            user.setEmail(claims.get("email", String.class));
             return Mono.just(user);
 
         } catch (JwtException | IllegalArgumentException e) {

@@ -29,6 +29,7 @@ public class UserMapper {
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
                 .baseSalary(user.getBaseSalary())
+                .roleId(user.getRoleId())
                 .build();
     }
 }
